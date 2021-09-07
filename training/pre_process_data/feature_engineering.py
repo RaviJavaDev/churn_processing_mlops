@@ -1,10 +1,10 @@
 import pandas as pd
 import numpy as np
 from imblearn.over_sampling import SMOTE
-from sklearn.preprocessing import LabelEncoder
 
 from utils.data_management import DataManagement
 from utils.feature_scaling import FeatureScaling
+from sklearn.preprocessing import LabelEncoder
 
 
 class FeatureEngineering:
@@ -37,16 +37,17 @@ class FeatureEngineering:
         self.dataset = self.feature_scaling.min_max_scaling(self.dataset, numeric_features)
 
         # divide independent and dependent columns
-        x = self.dataset
+        x = self.dataset.drop('Churn', axis=1)
+        y = self.dataset['Churn']
 
         # from dataset observed that churn column is imbalanced and due to this there
         # is higher chances our model will not predict better we can do up sampling using SMOTE from imblearn
-        # x, y = self.smote.fit_resample(x, y)
+        x, y = self.smote.fit_resample(x, y)
 
-        final_df = x
-        final_df.to_csv('./processed_data/cleaned_data.csv', sep=',', index=None, header=True)
+        final_df = pd.concat([x, y], axis=1)
+        final_df.to_csv('./cleaned_data/cleaned_data.csv', sep=',', index=None, header=True)
 
-        return x
+        return x, y
 
     def remove_cols(self, cols):
         """ removes columns from dataframe.
@@ -99,24 +100,24 @@ class FeatureEngineering:
 
         # for columns replace Yes with 1 and No 0
         yes_no_cols = ['Partner', 'PhoneService', 'Dependents', 'MultipleLines', 'OnlineSecurity', 'DeviceProtection',
-                       'TechSupport', 'StreamingMovies', 'PaperlessBilling', 'OnlineBackup', 'StreamingTV']
+                       'TechSupport', 'StreamingMovies', 'PaperlessBilling', 'OnlineBackup', 'StreamingTV', 'Churn']
 
         for col in yes_no_cols:
             self.dataset[col].replace({'Yes': 1, 'No': 0}, inplace=True)
             self.dataset[col] = self.dataset[col].astype(dtype='int8')
 
-            # convert InternetService,Contract,PaymentMethod columns into numeric using Label Encoding
-            label_encode_cols = ['InternetService', 'Contract', 'PaymentMethod']
-            label_encoder = LabelEncoder()
-            for label_encode_col in label_encode_cols:
-                self.dataset[label_encode_col] = label_encoder.fit_transform(self.dataset[label_encode_col])
-                self.dataset[label_encode_col] = self.dataset[label_encode_col].astype(dtype='int8')
+        # convert InternetService,Contract,PaymentMethod columns into numeric using Label Encoding
+        label_encode_cols = ['InternetService', 'Contract', 'PaymentMethod']
+        label_encoder = LabelEncoder()
+        for label_encode_col in label_encode_cols:
+            self.dataset[label_encode_col] = label_encoder.fit_transform(self.dataset[label_encode_col])
+            self.dataset[label_encode_col] = self.dataset[label_encode_col].astype(dtype='int8')
 
         return self.dataset
 
 
 if __name__ == '__main__':
-    df = pd.read_csv('../raw_data/customer_churn.csv')
+    df = pd.read_csv('../../data/raw_data/customer_churn.csv')
     dataset = df.copy()
     feature_eng = FeatureEngineering(dataset)
     x_train, y_train, x_test, y_test = feature_eng.pre_process_data()

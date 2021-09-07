@@ -5,7 +5,7 @@ import mlflow
 
 from mlflow.tracking import MlflowClient
 
-from prediction.feature_engineering import FeatureEngineering
+from prediction.pre_process_data.feature_engineering import FeatureEngineering
 from utils.read_params import ReadParams
 
 import os

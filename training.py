@@ -2,8 +2,8 @@ import argparse
 
 import pandas as pd
 
-from models.model_selection import ModelSelection
-from pre_process_data.feature_engineering import FeatureEngineering
+from training.model_mgmt.model_selection import ModelSelection
+from training.pre_process_data.feature_engineering import FeatureEngineering
 from utils.data_management import DataManagement
 from utils.read_params import ReadParams
 
@@ -18,7 +18,7 @@ class Training:
         self.data_mgmt = DataManagement()
 
     def train(self):
-        """ Method to train the dataset on ML algorithm and save models.
+        """ Method to train the dataset on ML algorithm and save model_mgmt.
 
         """
         x,y = self.feature_engineering.pre_process_data()

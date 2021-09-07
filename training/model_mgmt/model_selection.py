@@ -1,11 +1,11 @@
-from models.decision_trees import DecisionTrees
-from models.logistic_regression import LogisticReg
+from training.model_mgmt.decision_trees import DecisionTrees
+from training.model_mgmt.logistic_regression import LogisticReg
 import mlflow
 import mlflow.sklearn
 from urllib.parse import urlparse
 import matplotlib.pyplot as plt
 
-from models.random_forest import RandomForest
+from training.model_mgmt.random_forest import RandomForest
 
 
 class ModelSelection:

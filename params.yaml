@@ -7,7 +7,7 @@ raw_data:
   raw_dataset: raw_data/customer_churn.csv
 
 processed_data:
-  processed_dataset: processed_data/cleaned_data.csv
+  processed_dataset: cleaned_data/cleaned_data.csv
 
 estimators:
   LogisticRegression:

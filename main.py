@@ -1,10 +1,11 @@
 from training import Training
 import pandas as pd
+import flask
 
 
 def train():
     train_model = Training()
-    df = pd.read_csv('./raw_data/customer_churn.csv')
+    df = pd.read_csv('data/raw_data/customer_churn.csv')
     train_model.train(df)
 
 
