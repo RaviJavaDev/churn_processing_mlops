@@ -4,10 +4,10 @@ base:
   target_col: Churn
 
 raw_data:
-  raw_dataset: raw_data/customer_churn.csv
+  raw_dataset: data/raw_data/customer_churn.csv
 
 processed_data:
-  processed_dataset: cleaned_data/cleaned_data.csv
+  processed_dataset: data/cleaned_data/cleaned_data.csv
 
 estimators:
   LogisticRegression:
@@ -25,7 +25,13 @@ estimators:
       criterion: [ 'gini','entropy' ]
       max_depth: [ 5,10,15,20,25,30,40,50 ]
       min_samples_leaf: [ 1,2,3,4,5 ]
-
+  LightGBM:
+    params:
+      objective: ['binary']
+      boosting: ['gbdt','rf','dart','goss']
+      num_iterations: [25,75,100,125,150]
+      learning_rate: [0.001,0.0001,0.00001,0.005,0.05]
+      num_leaves: [10,20,30,40,50]
 
 model_dir: saved_models
 

@@ -1,11 +1,15 @@
 from training.model_mgmt.decision_trees import DecisionTrees
+from training.model_mgmt.light_gbm import LightGBM
 from training.model_mgmt.logistic_regression import LogisticReg
 import mlflow
 import mlflow.sklearn
 from urllib.parse import urlparse
 import matplotlib.pyplot as plt
+from sklearn.metrics import plot_confusion_matrix, plot_roc_curve
 
 from training.model_mgmt.random_forest import RandomForest
+
+from lightgbm import plot_importance
 
 
 class ModelSelection:
@@ -31,6 +35,9 @@ class ModelSelection:
                         x_test,
                         y_test,
                         y_pred)
+                    self.log_roc_auc_artifact(model.logistic_regression, x_test=x_test, y_test=y_test)
+
+                    self.log_confusion_matrix_artifact(model.logistic_regression, x_test=x_test, y_test=y_test)
                 elif estimator == 'RandomForest':
                     params = estimators[estimator]['params']
 
@@ -41,6 +48,9 @@ class ModelSelection:
                         x_test,
                         y_test,
                         y_pred)
+                    self.log_roc_auc_artifact(model.random_forest, x_test=x_test, y_test=y_test)
+
+                    self.log_confusion_matrix_artifact(model.random_forest, x_test=x_test, y_test=y_test)
                 elif estimator == 'DecisionTrees':
                     params = estimators[estimator]['params']
 
@@ -51,10 +61,29 @@ class ModelSelection:
                         x_test,
                         y_test,
                         y_pred)
+                    self.log_roc_auc_artifact(model.decision_trees, x_test=x_test, y_test=y_test)
+                    self.log_confusion_matrix_artifact(model.decision_trees, x_test=x_test, y_test=y_test)
+                elif estimator == 'LightGBM':
+                    params = estimators[estimator]['params']
+
+                    model = LightGBM()
+                    model.fit(x_train=x_train, y_train=y_train, params=params)
+                    y_pred = model.predict(x_test=x_test)
+                    score, classification_rep, confusion_mtx, roc_auc, precision, recall, f1_score, fpr, tpr, thresholds = model.evaluate_performance(
+                        x_test,
+                        y_test,
+                        y_pred)
+                    self.log_roc_auc_artifact(model.lbm_classifier, x_test=x_test, y_test=y_test)
+
+                    self.log_confusion_matrix_artifact(model.lbm_classifier, x_test=x_test, y_test=y_test)
+
+                    self.log_feature_importance_artifact(model.lbm_classifier)
 
                 mlflow.log_params(model.get_params())
+
                 self.log_metrics(mlflow, score, confusion_mtx, roc_auc, precision, recall, f1_score)
-                self.log_artifact(mlflow, fpr, tpr, roc_auc)
+
+                mlflow.log_artifact('./requirements.txt')
 
                 tracking_url_type_store = urlparse(mlflow.get_artifact_uri()).scheme
 
@@ -81,14 +110,31 @@ class ModelSelection:
         mlflow.log_metric('true_negative', true_negative)
         mlflow.log_metric('roc_auc_score', roc_auc)
 
-    def log_artifact(self, mlflow, fpr, tpr, roc_auc):
-        plt.plot(fpr, tpr, color='orange', label='ROC')
-        plt.plot([0, 1], [0, 1], color='darkblue', linestyle='--', label='ROC curve (area = %0.2f)' % roc_auc)
-        plt.xlabel('False Positive Rate')
-        plt.ylabel('True Positive Rate')
-        plt.title('Receiver Operating Characteristic (ROC) Curve')
-        plt.legend()
-        # plt.show()
-        plt.savefig("ROC_AUC_curve.png")
-        mlflow.log_artifact("ROC_AUC_curve.png")
-        plt.close()
+    def log_roc_auc_artifact(self, model, x_test, y_test):
+
+        # Plot and save AUC details
+        plot_roc_curve(model, x_test, y_test)
+        plt.xlabel('FPR')
+        plt.ylabel('TPR')
+        plt.title('ROC AUC Curve')
+        filename = f'./images/validation_roc_curve.png'
+        plt.savefig(filename)
+        # log model artifacts
+        mlflow.log_artifact(filename)
+
+    def log_confusion_matrix_artifact(self, model, x_test, y_test):
+        plot_confusion_matrix(model, x_test, y_test,
+                              display_labels=['Placed', 'Not Placed'],
+                              cmap='magma')
+        plt.title('Confusion Matrix')
+        filename = f'./images/validation_confusion_matrix.png'
+        plt.savefig(filename)
+        # log model artifacts
+        mlflow.log_artifact(filename)
+
+    def log_feature_importance_artifact(self, model):
+        plot_importance(model, height=0.4)
+        filename = './images/lgb_validation_feature_importance.png'
+        plt.savefig(filename)
+        # log model artifacts
+        mlflow.log_artifact(filename)

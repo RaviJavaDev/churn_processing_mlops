@@ -27,8 +27,8 @@ class RandomForest:
         score, classification_rep, confusion_mtx, roc_auc, precision, recall, f1_score, fpr, \
         tpr, thresholds = self.evaluation_metric.evaluate_performance(
             self.random_forest, x, y_test, y_pred)
-        return  score, classification_rep, confusion_mtx, roc_auc, precision, recall, f1_score, fpr, \
-        tpr, thresholds
+        return score, classification_rep, confusion_mtx, roc_auc, precision, recall, f1_score, fpr, \
+               tpr, thresholds
 
     def get_params(self):
         return self.best_params

@@ -1,4 +1,4 @@
-from training import Training
+from training_service import Training
 import pandas as pd
 import flask
 

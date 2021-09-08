@@ -45,7 +45,7 @@ class FeatureEngineering:
         x, y = self.smote.fit_resample(x, y)
 
         final_df = pd.concat([x, y], axis=1)
-        final_df.to_csv('./cleaned_data/cleaned_data.csv', sep=',', index=None, header=True)
+        final_df.to_csv('./data/cleaned_data/cleaned_data.csv', sep=',', index=None, header=True)
 
         return x, y
 
