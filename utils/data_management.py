@@ -11,8 +11,8 @@ class DataManagement:
     Email: ravisonawane20@gmail.com
     """
 
-    def __init__(self):
-        pass
+    def __init__(self, logger):
+        self.logger = logger
 
     def train_test_split(self, *arrays, test_size=0.25, train_size=None, random_state=42, stratify=None):
         """ splits dataset into train and test set.
@@ -42,8 +42,10 @@ class DataManagement:
                 List containing train-test split of inputs.
 
         """
+        self.logger.info('***** In  train_test_split started *****')
         x_train, x_test, y_train, y_test = train_test_split(*arrays, test_size=test_size, train_size=train_size,
                                                             random_state=random_state, stratify=stratify)
+        self.logger.info('***** In  train_test_split finished *****')
 
         return x_train, y_train, x_test, y_test
 

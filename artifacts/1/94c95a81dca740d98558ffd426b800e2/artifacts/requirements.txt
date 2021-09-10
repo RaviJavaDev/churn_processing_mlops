@@ -1,0 +1,16 @@
+certifi==2021.5.30
+joblib==1.0.1
+numpy==1.19.2
+pandas==1.1.5
+pip==21.2.2
+python-dateutil==2.8.2
+scikit-learn==0.24.2
+scipy==1.5.2
+setuptools==52.0.0
+imbalanced-learn==0.8.0
+mlflow==1.20.2
+pyyaml~=5.4.1
+imblearn~=0.0
+flask~=2.0.1
+lightgbm~=3.2.1
+matplotlib~=3.3.4

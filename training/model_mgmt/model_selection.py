@@ -13,11 +13,12 @@ from lightgbm import plot_importance
 
 
 class ModelSelection:
-    def __init__(self, config):
+    def __init__(self, config, logger):
         self.config = config
+        self.logger = logger
 
     def fit(self, x_train, y_train, x_test, y_test):
-
+        self.logger.info('***** Model Selection Started *****')
         estimators = self.config['estimators']
         mlflow_config = self.config['mlflow_config']
         mlflow.set_tracking_uri(mlflow_config['remote_server_uri'])
@@ -28,7 +29,7 @@ class ModelSelection:
                 if estimator == 'LogisticRegression':
                     params = estimators[estimator]['params']
 
-                    model = LogisticReg()
+                    model = LogisticReg(self.logger)
                     model.fit(x_train=x_train, y_train=y_train, params=params)
                     y_pred = model.predict(x_test=x_test)
                     score, classification_rep, confusion_mtx, roc_auc, precision, recall, f1_score, fpr, tpr, thresholds = model.evaluate_performance(
@@ -41,7 +42,7 @@ class ModelSelection:
                 elif estimator == 'RandomForest':
                     params = estimators[estimator]['params']
 
-                    model = RandomForest()
+                    model = RandomForest(self.logger)
                     model.fit(x_train=x_train, y_train=y_train, params=params)
                     y_pred = model.predict(x_test=x_test)
                     score, classification_rep, confusion_mtx, roc_auc, precision, recall, f1_score, fpr, tpr, thresholds = model.evaluate_performance(
@@ -54,7 +55,7 @@ class ModelSelection:
                 elif estimator == 'DecisionTrees':
                     params = estimators[estimator]['params']
 
-                    model = DecisionTrees()
+                    model = DecisionTrees(self.logger)
                     model.fit(x_train=x_train, y_train=y_train, params=params)
                     y_pred = model.predict(x_test=x_test)
                     score, classification_rep, confusion_mtx, roc_auc, precision, recall, f1_score, fpr, tpr, thresholds = model.evaluate_performance(
@@ -66,7 +67,7 @@ class ModelSelection:
                 elif estimator == 'LightGBM':
                     params = estimators[estimator]['params']
 
-                    model = LightGBM()
+                    model = LightGBM(self.logger)
                     model.fit(x_train=x_train, y_train=y_train, params=params)
                     y_pred = model.predict(x_test=x_test)
                     score, classification_rep, confusion_mtx, roc_auc, precision, recall, f1_score, fpr, tpr, thresholds = model.evaluate_performance(
@@ -93,9 +94,11 @@ class ModelSelection:
                         estimator,
                         registered_model_name=mlflow_config['registered_model_name'])
                 else:
-                    mlflow.sklearn.load_model(model, estimator)
+                    mlflow.sklearn.load_model(model)
+        self.logger.info('***** Model Selection Started *****')
 
     def log_metrics(self, mlflow, score, confusion_mtx, roc_auc, precision, recall, f1_score):
+        self.logger.info('***** Model Selection log_metrics Started *****')
         mlflow.log_metric('accuracy', score)
         mlflow.log_metric('precision', precision)
         mlflow.log_metric('recall', recall)
@@ -109,32 +112,38 @@ class ModelSelection:
         mlflow.log_metric('false_negative', false_negative)
         mlflow.log_metric('true_negative', true_negative)
         mlflow.log_metric('roc_auc_score', roc_auc)
+        self.logger.info('***** Model Selection log_metrics Finished *****')
 
     def log_roc_auc_artifact(self, model, x_test, y_test):
-
+        self.logger.info('***** Model Selection log_roc_auc_artifact Started *****')
         # Plot and save AUC details
         plot_roc_curve(model, x_test, y_test)
         plt.xlabel('FPR')
         plt.ylabel('TPR')
         plt.title('ROC AUC Curve')
-        filename = f'./images/validation_roc_curve.png'
+        filename = './images/validation_roc_curve.png'
         plt.savefig(filename)
         # log model artifacts
         mlflow.log_artifact(filename)
+        self.logger.info('***** Model Selection log_roc_auc_artifact Finished *****')
 
     def log_confusion_matrix_artifact(self, model, x_test, y_test):
+        self.logger.info('***** Model Selection log_confusion_matrix_artifact Started *****')
         plot_confusion_matrix(model, x_test, y_test,
-                              display_labels=['Placed', 'Not Placed'],
+                              display_labels=['Churned', 'Not Churned'],
                               cmap='magma')
         plt.title('Confusion Matrix')
         filename = f'./images/validation_confusion_matrix.png'
         plt.savefig(filename)
         # log model artifacts
         mlflow.log_artifact(filename)
+        self.logger.info('***** Model Selection log_confusion_matrix_artifact Finished *****')
 
     def log_feature_importance_artifact(self, model):
+        self.logger.info('***** Model Selection log_feature_importance_artifact Started *****')
         plot_importance(model, height=0.4)
         filename = './images/lgb_validation_feature_importance.png'
         plt.savefig(filename)
         # log model artifacts
         mlflow.log_artifact(filename)
+        self.logger.info('***** Model Selection log_feature_importance_artifact Finished *****')

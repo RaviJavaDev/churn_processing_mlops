@@ -8,15 +8,16 @@ from utils.feature_scaling import FeatureScaling
 
 
 class FeatureEngineering:
-    def __init__(self, dataset, config):
+    def __init__(self, dataset, config, logger):
+        self.logger = logger
         self.config = config
         self.dataset = dataset
-        self.feature_scaling = FeatureScaling()
-        self.data_mgmt = DataManagement()
+        self.feature_scaling = FeatureScaling(logger)
+        self.data_mgmt = DataManagement(logger)
         self.smote = SMOTE()
 
     def pre_process_data(self):
-
+        self.logger.info('***** Prediction Feature Engineering Pipeline pre_process_data Started *****')
         # remove unwanted cols
         self.remove_cols(['customerID'])
 
@@ -44,8 +45,8 @@ class FeatureEngineering:
         # x, y = self.smote.fit_resample(x, y)
 
         final_df = x
-        final_df.to_csv('./cleaned_data/cleaned_data.csv', sep=',', index=None, header=True)
-
+        final_df.to_csv('./data/cleaned_data/prediction/cleaned_data.csv', sep=',', index=None, header=True)
+        self.logger.info('***** Prediction Feature Engineering Pipeline pre_process_data Finished *****')
         return x
 
     def remove_cols(self, cols):
@@ -61,18 +62,22 @@ class FeatureEngineering:
             df:
                 dataframe without cols.
         """
-
+        self.logger.info(f'***** In  remove_cols removing column {cols} Started *****')
         self.dataset.drop(labels=cols, inplace=True, axis=1)
+        self.logger.info(f'***** In  remove_cols removing column {cols} Finished *****')
 
     def fill_total_charge(self, monthly_charges, tenure):
+        self.logger.info('***** In fill_total_charge Started *****')
         if tenure == 0:
             total_charges = monthly_charges
         else:
             total_charges = tenure * monthly_charges
+        self.logger.info('***** In fill_total_charge Finished *****')
         return np.round(total_charges, 2)
 
-    def process_categorical_features(self):
 
+    def process_categorical_features(self):
+        self.logger.info('***** In  process_categorical_features Started *****')
         # for gender column replace with value 1 & 0
         self.dataset['gender'].replace({'Male': 1, 'Female': 0}, inplace=True)
 
@@ -111,6 +116,7 @@ class FeatureEngineering:
             for label_encode_col in label_encode_cols:
                 self.dataset[label_encode_col] = label_encoder.fit_transform(self.dataset[label_encode_col])
                 self.dataset[label_encode_col] = self.dataset[label_encode_col].astype(dtype='int8')
+        self.logger.info('***** In  process_categorical_features Finished *****')
 
         return self.dataset
 

@@ -4,11 +4,11 @@ from pathlib import Path
 
 
 class FileLogger:
-    def __init__(self):
+    def __init__(self, log_path):
         parent_path = Path(os.path.realpath('__file__')).parent
-        os.makedirs(os.path.join(parent_path, 'logs'), exist_ok=True)
+        os.makedirs(os.path.join(parent_path, log_path), exist_ok=True)
         logging.basicConfig(
-            filename=os.path.join(parent_path, 'logs', 'app_logs.txt'),
+            filename=os.path.join(parent_path, log_path, 'logs.txt'),
             level=logging.DEBUG, format='%(asctime)s %(levelname)s %(message)s')
 
     def debug(self, message):
