@@ -24,12 +24,16 @@ class Training:
 
         """
         self.logger.info('***** Started Training *****')
-        x, y = self.feature_engineering.pre_process_data()
+        try:
+            x, y = self.feature_engineering.pre_process_data()
 
-        # divide data into train and test
-        x_train, y_train, x_test, y_test = self.data_mgmt.train_test_split(x, y)
+            # divide data into train and test
+            x_train, y_train, x_test, y_test = self.data_mgmt.train_test_split(x, y)
 
-        self.model_selection.fit(x_train, y_train, x_test, y_test)
+            self.model_selection.fit(x_train, y_train, x_test, y_test)
+        except Exception as e:
+            self.logger.error(f'error in training service train() exception: {e}')
+
         self.logger.info('***** Finished Training *****')
 
 

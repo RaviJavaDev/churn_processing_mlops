@@ -99,3 +99,27 @@ Name: metrics.accuracy, dtype: float64
 2021-09-10 23:47:26,011 INFO ***** In RandomForest Predict Finished *****
 2021-09-10 23:47:26,011 INFO Prediction result is= [0, 0, 1, 0, 0]
 2021-09-10 23:47:26,011 INFO ***** Prediction predict Finished *****
+2021-09-11 12:18:16,474 INFO ***** Prediction predict Started *****
+2021-09-11 12:18:16,493 INFO ***** Prediction select_best_model Started *****
+2021-09-11 12:18:16,569 DEBUG Starting new HTTP connection (1): 127.0.0.1:1234
+2021-09-11 12:18:16,602 DEBUG http://127.0.0.1:1234 "GET /api/2.0/mlflow/experiments/get-by-name?experiment_name=Churn+Processing+Experiment HTTP/1.1" 200 168
+2021-09-11 12:18:16,617 DEBUG Starting new HTTP connection (1): 127.0.0.1:1234
+2021-09-11 12:18:16,745 DEBUG http://127.0.0.1:1234 "POST /api/2.0/mlflow/runs/search HTTP/1.1" 200 56078
+2021-09-11 12:18:17,258 INFO Highest accuracy experiment run_id = 03d2d80efde64f3780d6197c1581327f
+2021-09-11 12:18:17,328 DEBUG Starting new HTTP connection (1): 127.0.0.1:1234
+2021-09-11 12:18:17,364 DEBUG http://127.0.0.1:1234 "GET /api/2.0/preview/mlflow/model-versions/search?filter=run_id%3D%2703d2d80efde64f3780d6197c1581327f%27 HTTP/1.1" 200 439
+2021-09-11 12:18:17,367 INFO  Best model selected  = ./artifacts/1/03d2d80efde64f3780d6197c1581327f/artifacts/RandomForest\model.pkl with accuracy = 0    0.842675
+Name: metrics.accuracy, dtype: float64
+2021-09-11 12:18:17,368 INFO ***** Prediction select_best_model Finished *****
+2021-09-11 12:18:19,464 INFO ***** Prediction Feature Engineering Pipeline pre_process_data Started *****
+2021-09-11 12:18:19,473 INFO ***** In  remove_cols removing column ['customerID'] Started *****
+2021-09-11 12:18:19,476 INFO ***** In  remove_cols removing column ['customerID'] Finished *****
+2021-09-11 12:18:19,490 INFO ***** In  process_categorical_features Started *****
+2021-09-11 12:18:19,537 INFO ***** In  process_categorical_features Finished *****
+2021-09-11 12:18:19,537 INFO ***** In FeatureScaling min_max_scaling Started *****
+2021-09-11 12:18:19,553 INFO ***** In FeatureScaling min_max_scaling Finished *****
+2021-09-11 12:18:19,558 INFO ***** Prediction Feature Engineering Pipeline pre_process_data Finished *****
+2021-09-11 12:18:19,558 INFO ***** In RandomForest Predict Started *****
+2021-09-11 12:18:19,586 INFO ***** In RandomForest Predict Finished *****
+2021-09-11 12:18:19,586 INFO Prediction result is= [0, 0, 0, 1, 1]
+2021-09-11 12:18:19,586 INFO ***** Prediction predict Finished *****

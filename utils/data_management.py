@@ -43,8 +43,13 @@ class DataManagement:
 
         """
         self.logger.info('***** In  train_test_split started *****')
-        x_train, x_test, y_train, y_test = train_test_split(*arrays, test_size=test_size, train_size=train_size,
-                                                            random_state=random_state, stratify=stratify)
+        try:
+            x_train, x_test, y_train, y_test = train_test_split(*arrays, test_size=test_size, train_size=train_size,
+                                                                random_state=random_state, stratify=stratify)
+        except Exception as e:
+            self.logger.error(f'error in DataManagement train_test_split e: {e}')
+            raise e
+
         self.logger.info('***** In  train_test_split finished *****')
 
         return x_train, y_train, x_test, y_test
@@ -73,8 +78,14 @@ class DataManagement:
                        List containing train-test split of inputs.
 
                """
-        x_train, x_valid, y_train, y_valid = train_test_split(*arrays, test_size=val_size, random_state=random_state,
-                                                              stratify=stratify)
+        try:
+            x_train, x_valid, y_train, y_valid = train_test_split(*arrays, test_size=val_size,
+                                                                  random_state=random_state,
+                                                                  stratify=stratify)
+        except Exception as e:
+            self.logger.error(f'error in DataManagement valid_split e: {e}')
+            raise e
+
         return x_train, y_train, x_valid, y_valid
 
 

@@ -12,7 +12,11 @@ class FeatureScaling:
 
         """
         self.logger.info('***** In FeatureScaling min_max_scaling Started *****')
-        dataset[columns] = self.min_max_scalar.fit_transform(dataset[columns])
+        try:
+            dataset[columns] = self.min_max_scalar.fit_transform(dataset[columns])
+        except Exception as e:
+            self.logger.error(f'error in FeatureScaling min_max_scaling e: {e}')
+            raise e
         self.logger.info('***** In FeatureScaling min_max_scaling Finished *****')
         return dataset
 
@@ -20,6 +24,10 @@ class FeatureScaling:
         """
         """
         self.logger.info('***** In FeatureScaling standard_scaling Started *****')
-        dataset[columns] = self.standard_scalar.fit_transform(dataset[columns])
+        try:
+            dataset[columns] = self.standard_scalar.fit_transform(dataset[columns])
+        except Exception as e:
+            self.logger.error(f'error in FeatureScaling standard_scaling e: {e}')
+            raise e
         self.logger.info('***** In FeatureScaling standard_scaling Finished *****')
         return dataset
